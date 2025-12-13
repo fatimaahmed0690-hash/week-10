@@ -1,4 +1,4 @@
-CREATE DATABASE IF NOT EXISTS cyber_platform;
+CREATE DATABASE IF NOT EXISTS cybersecurity_platform;
 USE cyber_platform;
 
 CREATE TABLE IF NOT EXISTS users (
@@ -22,3 +22,4 @@ VALUES ('admin', SHA2('admin123',256));
 INSERT INTO incidents (category,severity,status,description,incident_date)
 VALUES
 ('Malware','High','Open','Ransomware detected','2025-01-01');
+
