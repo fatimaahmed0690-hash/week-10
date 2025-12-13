@@ -11,12 +11,12 @@ class DatabaseManager:
                 host=os.getenv("DB_HOST", "localhost"),
                 user=os.getenv("DB_USER", "root"),
                 password=os.getenv("DB_PASSWORD", ""),
-                database=os.getenv("DB_NAME", "cyber_platform")
+                database=os.getenv("DB_NAME", "cybersecurity_platform")  # updated DB name
             )
             self.cursor = self.conn.cursor(dictionary=True)
             print("Database connected")
         except mysql.connector.Error as e:
-            print(f" Database connection failed: {e}")
+            print(f"Database connection failed: {e}")
             self.conn = None
             self.cursor = None
 
@@ -39,3 +39,11 @@ class DatabaseManager:
             self.cursor.execute("SELECT * FROM incidents")
             return self.cursor.fetchall()
         return []
+
+    def add_incident(self, category, severity, status, description, incident_date):
+        if self.cursor:
+            self.cursor.execute(
+                "INSERT INTO incidents (category, severity, status, description, incident_date) VALUES (%s,%s,%s,%s,%s)",
+                (category, severity, status, description, incident_date)
+            )
+            self.conn.commit()
