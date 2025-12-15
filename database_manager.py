@@ -11,7 +11,7 @@ class DatabaseManager:
                 host=os.getenv("DB_HOST", "localhost"),
                 user=os.getenv("DB_USER", "root"),
                 password=os.getenv("DB_PASSWORD", ""),
-                database=os.getenv("DB_NAME", "cybersecurity_platform")  # updated DB name
+                database=os.getenv("DB_NAME", "cybersecurity_platform")
             )
             self.cursor = self.conn.cursor(dictionary=True)
             print("Database connected")
@@ -22,7 +22,9 @@ class DatabaseManager:
 
     def get_user(self, username):
         if self.cursor:
-            self.cursor.execute("SELECT * FROM users WHERE username=%s", (username,))
+            self.cursor.execute(
+                "SELECT * FROM users WHERE username=%s", (username,)
+            )
             return self.cursor.fetchone()
         return None
 
@@ -43,7 +45,36 @@ class DatabaseManager:
     def add_incident(self, category, severity, status, description, incident_date):
         if self.cursor:
             self.cursor.execute(
-                "INSERT INTO incidents (category, severity, status, description, incident_date) VALUES (%s,%s,%s,%s,%s)",
+                """
+                INSERT INTO incidents
+                (category, severity, status, description, incident_date)
+                VALUES (%s,%s,%s,%s,%s)
+                """,
                 (category, severity, status, description, incident_date)
             )
             self.conn.commit()
+
+    def incident_by_severity(self):
+        self.cursor.execute("""
+            SELECT severity, COUNT(*) count
+            FROM incidents
+            GROUP BY severity
+        """)
+        return self.cursor.fetchall()
+
+    def incident_by_category(self):
+        self.cursor.execute("""
+            SELECT category, COUNT(*) count
+            FROM incidents
+            GROUP BY category
+        """)
+        return self.cursor.fetchall()
+
+    def incident_status_trend(self):
+        self.cursor.execute("""
+            SELECT incident_date, COUNT(*) count
+            FROM incidents
+            GROUP BY incident_date
+            ORDER BY incident_date
+        """)
+        return self.cursor.fetchall()
